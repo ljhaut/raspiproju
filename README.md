@@ -5,13 +5,8 @@ Haetaan netistä sähkön SPOT-hinta seuraavalle päivälle ja sen mukaan tehdä
 Tällä hetkellä ohjelma ohjaa releitä, jotka kytketään lämminvesivaraajaan ja sitä kautta kytkee sähkövirran päälle tai pois. 
 Tulevaisuudessa toiminnallisuutta tullaan lisäämään.
 
-Ohjelman toimimeksi täytyy luoda "config.py" tiedosto repon juureen. 
+Ohjelman toimimiseksi täytyy suorittaa seuraava komento shellissä:
 
-Tiedostoon tulee lisätä seuraava:
+sh install.sh
 
-config = {
-    'debug': False,
-    'api_key':'oma avain tähän'
-}
-
-api_key on siis Entso E rajapinnassa käytettävä avain
+Tämän jälkeen config.py fileen "api_key" kohtaan täytyy antaa oma Entso e api_key
