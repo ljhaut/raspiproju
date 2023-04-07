@@ -2,16 +2,40 @@ import requests
 import xmltodict
 import json
 import time
+import socket
+import threading
 
 from datetime import datetime, timedelta
 from config import config
 
 api_key = config['api_key']
 debug = config['debug']
+HOST = 'localhost'
+PORT = 8000
 
 if debug == False:
     import RPi.GPIO as GPIO
 
+def handleRequest(conn):
+    request = conn.recv(1024).decode('utf-8')
+    if 'GET /' in request:
+        with open('data.json', 'r') as f:
+            data = json.load(f)
+            f.close()
+        response = f'HTTP/1.1 200 OK\nContent-Type: application/json\n\n{data}'
+        conn.sendall(response.encode('utf-8'))
+
+def runServer():
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        s.bind((HOST, PORT))
+        s.listen()
+        print(f'Servu kuuntelee {HOST}:{PORT}')
+
+        while True:
+            conn, addr = s.accept()
+            print(f'Yhdistetty {addr}')
+            handleRequest(conn)
+            conn.close()
 
 # Haetaan data Entso-E:n API-rajapinnasta HTTP GET - requestilla, saadaan xml muotoista dataa
 # Parametreina aikaperiodi, jolta halutaan dataa
@@ -205,11 +229,15 @@ def main():
                             time.sleep(2)
                             print("Rele pois päältä")
                             päällä = False
-                            if debug == False: GPIO.output(5, GPIO.HIGH)
+                            if debug == False: GPIO.output(5, GPIO.HIGH)    
 
                     time.sleep(2)
     except:
         print("exit")
         if debug == False: GPIO.cleanup()
 
-main()
+if __name__ == '__main__':
+    server_thread = threading.Thread(target=runServer)
+    server_thread.start()
+
+    main()
