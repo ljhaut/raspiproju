@@ -22,7 +22,7 @@ def handleRequest(conn):
         with open('data.json', 'r') as f:
             data = json.load(f)
             f.close()
-        response = f'HTTP/1.1 200 OK\nContent-Type: application/json\n\n{data}'
+        response = f'HTTP/1.1 200 OK\nContent-Type: application/json\nAccess-Control-Allow-Origin: *\nAccess-Control-Allow-Methods: GET\nAccess-Control-Allow-Headers: Content-Type\n\n{data}'
         conn.sendall(response.encode('utf-8'))
 
 def runServer():
