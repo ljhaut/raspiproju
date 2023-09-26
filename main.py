@@ -2,9 +2,9 @@ import requests
 import xmltodict
 import json
 import time
-import socket
 import threading
 
+from flask import Flask, jsonify
 from datetime import datetime, timedelta
 from config import config
 
@@ -16,26 +16,8 @@ PORT = 8000
 if debug == False:
     import RPi.GPIO as GPIO
 
-def handleRequest(conn):
-    request = conn.recv(1024).decode('utf-8')
-    if 'GET /' in request:
-        with open('data.json', 'r') as f:
-            data = json.load(f)
-            f.close()
-        response = f'HTTP/1.1 200 OK\nContent-Type: application/json\nAccess-Control-Allow-Origin: *\nAccess-Control-Allow-Methods: GET\nAccess-Control-Allow-Headers: Content-Type\n\n{data}'
-        conn.sendall(response.encode('utf-8'))
 
-def runServer():
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-        s.bind((HOST, PORT))
-        s.listen()
-        print(f'Servu kuuntelee {HOST}:{PORT}')
-
-        while True:
-            conn, addr = s.accept()
-            print(f'Yhdistetty {addr}')
-            handleRequest(conn)
-            conn.close()
+app = Flask(__name__)
 
 # Haetaan data Entso-E:n API-rajapinnasta HTTP GET - requestilla, saadaan xml muotoista dataa
 # Parametreina aikaperiodi, jolta halutaan dataa
@@ -236,8 +218,16 @@ def main():
         print("exit")
         if debug == False: GPIO.cleanup()
 
-if __name__ == '__main__':
-    server_thread = threading.Thread(target=runServer)
-    server_thread.start()
+@app.route('/')
+def index():
+    with open('data.json', 'r') as f:
+        data = json.load(f)
+    return jsonify(data)
 
-    main()
+if __name__ == '__main__':
+    
+    thread = threading.Thread(target=main)
+    thread.daemon = True
+    thread.start()
+
+    app.run(host='localhost', port=8000)
