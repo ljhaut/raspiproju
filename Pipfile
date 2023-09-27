@@ -6,7 +6,6 @@ name = "pypi"
 [packages]
 requests = "*"
 xmltodict = "*"
-customtkinter = "*"
 flask = "*"
 pyserial = "*"
 

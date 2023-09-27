@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "11c406d52059b220613ed5cf9520dacedf2c805ac440f8142b2f3cb8e4899b7d"
+            "sha256": "6abbf3a4684f598f8f8e98536a24ab26d0647ab407b1ec374b289e17bbd3ac5b"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -128,22 +128,6 @@
             ],
             "markers": "platform_system == 'Windows'",
             "version": "==0.4.6"
-        },
-        "customtkinter": {
-            "hashes": [
-                "sha256:e93448a8d22121e20ec16e95960a8306e17cf7e0079766f5804b2e855e614937",
-                "sha256:f8b2db189959033539884d7faff99ebbb654c18097d761ed844180e32f0b5929"
-            ],
-            "index": "pypi",
-            "version": "==5.2.0"
-        },
-        "darkdetect": {
-            "hashes": [
-                "sha256:a7509ccf517eaad92b31c214f593dbcf138ea8a43b2935406bbd565e15527a85",
-                "sha256:b5428e1170263eb5dea44c25dc3895edd75e6f52300986353cd63533fe7df8b1"
-            ],
-            "markers": "python_version >= '3.6'",
-            "version": "==0.8.0"
         },
         "flask": {
             "hashes": [

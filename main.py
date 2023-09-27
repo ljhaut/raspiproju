@@ -4,6 +4,7 @@ import json
 import time
 import threading
 
+
 from flask import Flask, jsonify
 from datetime import datetime, timedelta
 from config import config
@@ -12,7 +13,7 @@ api_key = config['api_key']
 debug = config['debug']
 
 if debug == False:
-    import RPi.GPIO as GPIO
+    from talker import Talker
 
 
 app = Flask(__name__)
@@ -113,21 +114,9 @@ def spotTodTom(spot):
 
     return spotToday, spotTomorrow
 
-#Alustetaan relekortti
-def initGPIO():
-    if debug == False:
-        Relay = [5, 6, 13, 16, 19, 20, 21, 26]
-
-        GPIO.setmode(GPIO.BCM)
-        GPIO.setwarnings(False)
-
-        for i in range(0,8):
-            GPIO.setup(Relay[i], GPIO.OUT)
-            GPIO.output(Relay[i], GPIO.HIGH)
-
 def main():
 
-    initGPIO()
+    if debug == False: talker = Talker()
 
     päällä = False
 
@@ -195,26 +184,29 @@ def main():
                     
                     # Jos tämän tunnin hinta on halvimpien joukossa, kytketään rele päälle
                     if any(d == pos for d in halvpos):
+
+                        gpionum = 21 #pico gpio number
+
                         if not päällä:
                             time.sleep(2)
                             print("Rele päälle")
                             päällä = True
                             if debug == False:
                                 try:
-                                    GPIO.output(5, GPIO.LOW)
+                                    talker.send(f'relayHigh({gpionum})')
                                 except:
-                                    GPIO.cleanup()
+                                    talker.send('clean()')
                     else:
                         if päällä:
                             time.sleep(2)
                             print("Rele pois päältä")
                             päällä = False
-                            if debug == False: GPIO.output(5, GPIO.HIGH)    
+                            if debug == False: talker.send(f'relayLow({gpionum})')
 
                     time.sleep(2)
     except:
         print("exit")
-        if debug == False: GPIO.cleanup()
+        if debug == False: talker.send('clean()')
 
 @app.route('/')
 def index():
