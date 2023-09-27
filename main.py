@@ -10,8 +10,6 @@ from config import config
 
 api_key = config['api_key']
 debug = config['debug']
-HOST = 'localhost'
-PORT = 8000
 
 if debug == False:
     import RPi.GPIO as GPIO
