@@ -17,12 +17,10 @@ if debug == False:
             self.serial.write(line.encode('utf-8'))
             reply = self.receive()
             reply = reply.replace('>>> ','') # lines after first will be prefixed by a propmt
-            if reply != text: # the line should be echoed, so the result should match
-                raise ValueError('expected %s got %s' % (text, reply))
 
         def receive(self) -> str:
             line = self.serial.read_until(self.TERMINATOR)
-            return line.decode('UTF8').strip() + self.name
+            return line.decode('UTF8').strip() + ' ' + self.name
 
         def close(self):
             self.serial.close()
