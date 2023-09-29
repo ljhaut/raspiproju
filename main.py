@@ -185,23 +185,25 @@ def main():
                     # Jos tämän tunnin hinta on halvimpien joukossa, kytketään rele päälle
                     if any(d == pos for d in halvpos):
 
-                        gpionum = 21 #pico gpio number
-
                         if not päällä:
                             time.sleep(2)
-                            print("Rele päälle")
+                            print("Releet päälle")
                             päällä = True
                             if debug == False:
                                 try:
-                                    talker.send(f'relayHigh({gpionum})')
+                                    talker.send(f'relaysHigh()')
+                                    print(talker.receive())
                                 except:
                                     talker.send('clean()')
+                                    print(talker.receive())
                     else:
                         if päällä:
                             time.sleep(2)
-                            print("Rele pois päältä")
+                            print("Releet pois päältä")
                             päällä = False
-                            if debug == False: talker.send(f'relayLow({gpionum})')
+                            if debug == False:
+                                talker.send(f'relaysLow()')
+                                print(talker.receive())
 
                     time.sleep(2)
     except:
@@ -220,4 +222,4 @@ if __name__ == '__main__':
     thread.daemon = True
     thread.start()
 
-    app.run(host='localhost', port=8000)
+    app.run(host='0.0.0.0', port=8000)
