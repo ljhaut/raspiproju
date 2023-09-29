@@ -116,7 +116,9 @@ def spotTodTom(spot):
 
 def main():
 
-    if debug == False: talker = Talker()
+    if debug == False:
+        talker1 = Talker('/dev/ttyACM0')
+        talker2 = Talker('/dev/ttyACM1')
 
     päällä = False
 
@@ -182,33 +184,39 @@ def main():
 
             while datetime.now().strftime("%D|%H:%M:%S") < tunti:
                     
-                    # Jos tämän tunnin hinta on halvimpien joukossa, kytketään rele päälle
-                    if any(d == pos for d in halvpos):
+                # Jos tämän tunnin hinta on halvimpien joukossa, kytketään rele päälle
+                if any(d == pos for d in halvpos):
 
-                        if not päällä:
-                            time.sleep(2)
-                            print("Releet päälle")
-                            päällä = True
-                            if debug == False:
-                                try:
-                                    talker.send(f'relaysHigh()')
-                                    print(talker.receive())
-                                except:
-                                    talker.send('clean()')
-                                    print(talker.receive())
-                    else:
-                        if päällä:
-                            time.sleep(2)
-                            print("Releet pois päältä")
-                            päällä = False
-                            if debug == False:
-                                talker.send(f'relaysLow()')
-                                print(talker.receive())
+                    if not päällä:
+                        time.sleep(2)
+                        päällä = True
+                        if debug == False:
+                            try:
+                                talker1.send(f'relaysHigh()')
+                                talker2.send(f'relaysHigh()')
+                                print(talker1.receive())
+                                print(talker2.receive())
+                            except:
+                                talker1.send(f'relaysLow()')
+                                talker2.send(f'relaysLow()')
+                                print(talker1.receive())
+                                print(talker2.receive())
+                else:
+                    if päällä:
+                        time.sleep(2)
+                        päällä = False
+                        if debug == False:
+                            talker1.send(f'relaysLow()')
+                            talker2.send(f'relaysLow()')
+                            print(talker1.receive())
+                            print(talker2.receive())
 
-                    time.sleep(2)
+                time.sleep(2)
     except:
         print("exit")
-        if debug == False: talker.send('clean()')
+        if debug == False:
+            talker1.send(f'relaysLow()')
+            talker2.send(f'relaysLow()')
 
 @app.route('/')
 def index():
