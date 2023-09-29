@@ -3,6 +3,8 @@ import xmltodict
 import json
 import time
 import threading
+import signal
+import sys
 
 
 from flask import Flask, jsonify
@@ -114,11 +116,21 @@ def spotTodTom(spot):
 
     return spotToday, spotTomorrow
 
-def main():
-
-    if debug == False:
+if debug == False:
         talker1 = Talker('/dev/ttyACM0')
         talker2 = Talker('/dev/ttyACM1')
+
+def cleanup(signal, frame):
+        print("Cleaning up...")
+        if not debug:
+            talker1.send('clean()')
+            talker2.send('clean()')
+        sys.exit(0)
+
+signal.signal(signal.SIGINT, cleanup)
+signal.signal(signal.SIGTERM, cleanup)
+
+def main():
 
     päällä = False
 
@@ -194,11 +206,13 @@ def main():
                             try:
                                 talker1.send(f'relaysHigh()')
                                 talker2.send(f'relaysHigh()')
+                                time.sleep(12)
                                 print(talker1.receive())
                                 print(talker2.receive())
                             except:
-                                talker1.send(f'relaysLow()')
-                                talker2.send(f'relaysLow()')
+                                talker1.send('clean()')
+                                talker2.send('clean()')
+                                time.sleep(12)
                                 print(talker1.receive())
                                 print(talker2.receive())
                 else:
@@ -208,6 +222,7 @@ def main():
                         if debug == False:
                             talker1.send(f'relaysLow()')
                             talker2.send(f'relaysLow()')
+                            time.sleep(12)
                             print(talker1.receive())
                             print(talker2.receive())
 
@@ -215,8 +230,8 @@ def main():
     except:
         print("exit")
         if debug == False:
-            talker1.send(f'relaysLow()')
-            talker2.send(f'relaysLow()')
+            talker1.send('clean()')
+            talker2.send('clean()')
 
 @app.route('/')
 def index():
@@ -224,10 +239,13 @@ def index():
         data = json.load(f)
     return jsonify(data)
 
+def run_flask():
+    app.run(host='0.0.0.0', port=8000)
+
 if __name__ == '__main__':
     
-    thread = threading.Thread(target=main)
+    thread = threading.Thread(target=run_flask)
     thread.daemon = True
     thread.start()
 
-    app.run(host='0.0.0.0', port=8000)
+    main()
