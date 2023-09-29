@@ -95,10 +95,14 @@ def tallennaArvot(lista, aika):
 # pos: palauttaa listan tunneista, jolloin halpaa
 def halvimmat(lista):
     
-    sort = sorted(lista, key=lambda x: float(x['price.amount']), reverse=False)
-    
-    tulos = [sort[0], sort[1], sort[2]]
-    pos = [sort[0]['position'], sort[1]['position'], sort[2]['position']]
+    aamu = lista[:8]
+    ilta = lista[8:]
+
+    aamu = sorted(aamu, key=lambda x: float(x['price.amount']), reverse=False)
+    ilta = sorted(ilta, key=lambda x: float(x['price.amount']), reverse=False)
+
+    tulos = [aamu[0], aamu[1], aamu[2], aamu[3], ilta[0], ilta[1]]
+    pos = [aamu[0]['position'], aamu[1]['position'], aamu[2]['position'], aamu[3]['position'], ilta[0]['position'], ilta[1]['position']]
     print("Päivitetyt halvat tunnit", tulos, pos)
 
     return tulos, pos
