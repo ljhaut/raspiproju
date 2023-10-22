@@ -103,6 +103,12 @@ def halvimmat(lista):
 
     tulos = [aamu[0], aamu[1], aamu[2], aamu[3], ilta[0], ilta[1]]
     pos = [aamu[0]['position'], aamu[1]['position'], aamu[2]['position'], aamu[3]['position'], ilta[0]['position'], ilta[1]['position']]
+
+    for i in lista:
+        if float(i['price.amount']) < 0 and i['position'] not in pos:
+            tulos.append(i)
+            pos.append(i['position'])
+
     print("Päivitetyt halvat tunnit", tulos, pos)
 
     return tulos, pos
@@ -129,6 +135,8 @@ def cleanup(signal, frame):
         if not debug:
             talker1.send('clean()')
             talker2.send('clean()')
+            talker1.close()
+            talker2.close()
         sys.exit(0)
 
 signal.signal(signal.SIGINT, cleanup)
