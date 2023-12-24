@@ -6,7 +6,9 @@ from model.ElecPrice import ElecPrice
 from datetime import datetime
 from model.Base import Base
 
-engine = create_engine('postgresql://lassi@localhost:5432/raspberry')
+from config import config
+
+engine = create_engine(config['psql_uri'])
 Base.metadata.create_all(engine)
 
 Session = sessionmaker(bind=engine)
