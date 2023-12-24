@@ -8,6 +8,8 @@ requests = "*"
 xmltodict = "*"
 flask = "*"
 pyserial = "*"
+psycopg2 = "*"
+flask-sqlalchemy = "*"
 
 [dev-packages]
 

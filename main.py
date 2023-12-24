@@ -2,23 +2,18 @@ import requests
 import xmltodict
 import json
 import time
-import threading
 import signal
 import sys
 
-
-from flask import Flask, jsonify
 from datetime import datetime, timedelta
 from config import config
+from db import saveData
 
 api_key = config['api_key']
 debug = config['debug']
 
 if debug == False:
     from talker import Talker
-
-
-app = Flask(__name__)
 
 # Haetaan data Entso-E:n API-rajapinnasta HTTP GET - requestilla, saadaan xml muotoista dataa
 # Parametreina aikaperiodi, jolta halutaan dataa
@@ -70,6 +65,8 @@ def keskiarvot(lista):
 def tallennaArvot(lista, aika):
 
     tallennettava = {"pvm": aika, "hinnat": lista}
+
+    saveData()
 
     with open("data.json") as f:
         file = json.load(f)
@@ -245,19 +242,6 @@ def main():
             talker1.send('clean()')
             talker2.send('clean()')
 
-@app.route('/')
-def index():
-    with open('data.json', 'r') as f:
-        data = json.load(f)
-    return jsonify(data)
-
-def run_flask():
-    app.run(host='0.0.0.0', port=8000)
-
 if __name__ == '__main__':
-    
-    thread = threading.Thread(target=run_flask)
-    thread.daemon = True
-    thread.start()
 
     main()
