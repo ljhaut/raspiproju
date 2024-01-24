@@ -1,3 +1,4 @@
+import threading
 import requests
 import xmltodict
 import json
@@ -7,7 +8,7 @@ import sys
 
 from datetime import datetime, timedelta
 from config import config
-from db import saveData
+from db import saveData, run_app
 
 api_key = config['api_key']
 debug = config['debug']
@@ -66,9 +67,9 @@ def tallennaArvot(lista, aika):
 
     tallennettava = {"pvm": aika, "hinnat": lista}
 
-    saveData()
+    print(saveData())
 
-    with open("data.json") as f:
+    with open("../data.json") as f:
         file = json.load(f)
         f.close()
 
@@ -243,5 +244,6 @@ def main():
             talker2.send('clean()')
 
 if __name__ == '__main__':
-
+    t1 = threading.Thread(target=run_app, daemon=True)
+    t1.start()
     main()
