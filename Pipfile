@@ -10,6 +10,10 @@ flask = "*"
 pyserial = "*"
 psycopg2 = "*"
 flask-sqlalchemy = "*"
+bcrypt = "*"
+pyjwt = "*"
+flask-cors = "*"
+cryptography = "*"
 
 [dev-packages]
 
