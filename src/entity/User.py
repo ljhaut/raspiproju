@@ -8,6 +8,7 @@ class User(Base):
     id = Column(Integer, primary_key=True)
     username = Column(String)
     password = Column(String)
+    access = Column(String)
 
     def __repr__(self):
-        return f"<User(username='{self.username}', password='{self.password}'>)"
+        return f"<User(username='{self.username}', password='{self.password}', access='{self.access}'>)"
