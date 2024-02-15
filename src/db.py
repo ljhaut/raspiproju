@@ -77,7 +77,15 @@ def login():
             return jsonify({'error': 'Invalid username or password'}), 401
         
     finally:
-        session.close()    
+        session.close()
+
+@app.route('/logout', methods=['POST'])
+def logout():
+
+    response = make_response(jsonify({'message':'Logged out succesfully'}))
+    response.delete_cookie('refresh')
+
+    return response
 
 @app.route('/refresh_token', methods=['POST'])
 def refresh():
@@ -155,8 +163,8 @@ def createAccessToken(user):
                 'user.access': user.access,
                 'exp': datetime.utcnow() + timedelta(minutes=15),
                 "https://hasura.io/jwt/claims": {
-                    "x-hasura-allowed-roles": ["user"],
-                    "x-hasura-default-role": "user",
+                    "x-hasura-allowed-roles": [user.access],
+                    "x-hasura-default-role": user.access,
                     'x-hasura-user-id': str(user.id)
                 }
             }, privateKey, algorithm='RS512')
