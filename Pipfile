@@ -14,6 +14,7 @@ bcrypt = "*"
 pyjwt = "*"
 flask-cors = "*"
 cryptography = "*"
+psycopg2-binary = "*"
 
 [dev-packages]
 

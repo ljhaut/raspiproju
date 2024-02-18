@@ -69,7 +69,7 @@ def tallennaArvot(lista, aika):
 
     print(saveData())
 
-    with open("../data.json") as f:
+    with open("data.json") as f:
         file = json.load(f)
         f.close()
 
@@ -77,7 +77,7 @@ def tallennaArvot(lista, aika):
 
         file.append(tallennettava)
 
-        with open("../data.json", "w", encoding="utf-8")as f:
+        with open("data.json", "w", encoding="utf-8")as f:
             json.dump(file, f, ensure_ascii=False, indent=4)
             f.close()
         print("Tiedostoon tehty lisäys päivälle", aika, '\n')

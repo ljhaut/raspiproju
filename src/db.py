@@ -15,7 +15,7 @@ from entity.Base import Base
 from config import config
 
 app = Flask(__name__)
-CORS(app, origins=["http://localhost:3000"], supports_credentials=True)
+CORS(app, origins=["*"], supports_credentials=True)
 
 engine = create_engine(config['psql_uri'])
 Base.metadata.create_all(engine)
@@ -120,7 +120,7 @@ def refresh():
 def saveData():
     session = Session()
 
-    with open('../data.json', 'r') as file:
+    with open('data.json', 'r') as file:
 
         dupes = 0
         data = json.load(file)
@@ -154,7 +154,7 @@ def saveData():
         return f'Data saved, dubes: {dupes}'
 
 def createAccessToken(user):
-    with open('../private.key', 'r') as f:
+    with open('private.key', 'r') as f:
         privateKey = f.read()
         f.close()
 
@@ -181,4 +181,4 @@ def createRefreshToken(user):
     return token 
 
 def run_app():
-    app.run()
+    app.run(host='0.0.0.0')

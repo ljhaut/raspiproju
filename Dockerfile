@@ -2,7 +2,10 @@
 
 FROM python:3
 WORKDIR /usr/src/app
+COPY data.json ./
 COPY requirements.txt ./
-RUN pip install -r requirements.txt
+COPY private.key ./
+RUN chmod 600 private.key
+RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 CMD [ "python", "./src/main.py"]
