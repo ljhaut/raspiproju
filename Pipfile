@@ -15,6 +15,7 @@ pyjwt = "*"
 flask-cors = "*"
 cryptography = "*"
 psycopg2-binary = "*"
+python-dotenv = "*"
 
 [dev-packages]
 

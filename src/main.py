@@ -5,13 +5,19 @@ import json
 import time
 import signal
 import sys
+import os
 
 from datetime import datetime, timedelta
-from config import config
 from db import saveData, run_app
+from dotenv import dotenv_values
 
-api_key = config['api_key']
-debug = config['debug']
+if os.getenv('ENVIRONMENT') == 'docker':
+    config = dotenv_values('.env.docker')
+else:
+    config = dotenv_values('.env.local')
+
+api_key = config['API_KEY']
+debug = True if config['DEBUG'] == 'True' else False
 
 if debug == False:
     from talker import Talker

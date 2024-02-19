@@ -1,6 +1,7 @@
 import bcrypt
 import json
 import jwt
+import os 
 
 from flask import Flask, jsonify, make_response, request
 from flask_cors import CORS
@@ -12,12 +13,17 @@ from entity.ElecPrice import ElecPrice
 from entity.User import User
 from entity.Base import Base
 
-from config import config
+from dotenv import dotenv_values
+
+if os.getenv('ENVIRONMENT') == 'docker':
+    config = dotenv_values('.env.docker')
+else:
+    config = dotenv_values('.env.local')
 
 app = Flask(__name__)
 CORS(app, origins=["*"], supports_credentials=True)
 
-engine = create_engine(config['psql_uri'])
+engine = create_engine(config['PSQL_URL'])
 Base.metadata.create_all(engine)
 
 Session = sessionmaker(bind=engine)
@@ -95,7 +101,7 @@ def refresh():
         refreshToken = request.cookies.get('refresh')
 
         try:
-            data = jwt.decode(refreshToken, config['refresh_secret'], algorithms=['HS256'])
+            data = jwt.decode(refreshToken, config['REFRESH_SECRET'], algorithms=['HS256'])
 
             user = session.query(User).filter_by(
             id = data['user.id']
@@ -176,9 +182,9 @@ def createRefreshToken(user):
     token = jwt.encode({
                 'user.id': user.id,
                 'exp': datetime.utcnow() + timedelta(days=7)
-            }, config['refresh_secret'], algorithm='HS256')
+            }, config['REFRESH_SECRET'], algorithm='HS256')
 
     return token 
 
 def run_app():
-    app.run(host='0.0.0.0')
+    app.run(host='0.0.0.0', port=int(config['PORT']))
