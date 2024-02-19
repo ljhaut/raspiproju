@@ -5,3 +5,4 @@ todo.txt
 private.key
 public.key
 .env.*
+app.log*

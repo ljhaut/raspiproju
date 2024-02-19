@@ -123,6 +123,16 @@ def refresh():
     finally:
         session.close()
 
+@app.route('/logs')
+def get_logs():
+    log_file = 'app.log'
+    if os.path.exists(log_file):
+        with open(log_file, 'r') as file:
+            lines = file.readlines()[-200:]
+            return jsonify(lines)
+    else:
+        return jsonify([])
+
 def saveData():
     session = Session()
 
