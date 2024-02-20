@@ -1,8 +1,14 @@
+import os
 import serial
 
-from config import config
+from dotenv import dotenv_values
 
-debug = config['debug']
+if os.getenv('ENVIRONMENT') == 'docker':
+    config = dotenv_values('.env.docker')
+else:
+    config = dotenv_values('.env.local')
+
+debug = True if config['DEBUG'] == 'True' else False
 
 if debug == False:
     class Talker:

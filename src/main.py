@@ -1,24 +1,61 @@
+import threading
 import requests
 import xmltodict
 import json
 import time
-import threading
 import signal
 import sys
+import os
+import logging
 
-
-from flask import Flask, jsonify
 from datetime import datetime, timedelta
-from config import config
+from db import saveData, run_app
+from dotenv import dotenv_values
+from logging.handlers import RotatingFileHandler
 
-api_key = config['api_key']
-debug = config['debug']
+if os.getenv('ENVIRONMENT') == 'docker':
+    config = dotenv_values('.env.docker')
+else:
+    config = dotenv_values('.env.local')
+
+api_key = config['API_KEY']
+debug = True if config['DEBUG'] == 'True' else False
 
 if debug == False:
     from talker import Talker
 
+def initLogger():
 
-app = Flask(__name__)
+    log_filename = 'app.log'
+
+    if os.path.exists(log_filename):
+        open(log_filename, 'w').close()
+
+    root_logger = logging.getLogger()
+    root_logger.setLevel(logging.INFO)
+
+    log_file_handler = RotatingFileHandler(log_filename, maxBytes=1000000, backupCount=4)
+    log_file_handler.setLevel(logging.INFO)
+
+    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    log_file_handler.setFormatter(formatter)
+
+    root_logger.addHandler(log_file_handler)
+
+    class StdoutLogger(object):
+
+        def __init__(self, logger, level):
+            self.logger = logger
+            self.level = level
+
+        def write(self, msg):
+            if msg.rstrip() != "":
+                self.logger.log(self.level, msg.rstrip())
+
+        def flush(self):
+            pass
+
+    sys.stdout = StdoutLogger(root_logger, logging.INFO)
 
 # Haetaan data Entso-E:n API-rajapinnasta HTTP GET - requestilla, saadaan xml muotoista dataa
 # Parametreina aikaperiodi, jolta halutaan dataa
@@ -71,6 +108,8 @@ def tallennaArvot(lista, aika):
 
     tallennettava = {"pvm": aika, "hinnat": lista}
 
+    print(saveData())
+
     with open("data.json") as f:
         file = json.load(f)
         f.close()
@@ -83,6 +122,8 @@ def tallennaArvot(lista, aika):
             json.dump(file, f, ensure_ascii=False, indent=4)
             f.close()
         print("Tiedostoon tehty lisäys päivälle", aika, '\n')
+        
+        print(saveData())
 
     else:
 
@@ -143,6 +184,8 @@ signal.signal(signal.SIGINT, cleanup)
 signal.signal(signal.SIGTERM, cleanup)
 
 def main():
+    
+    initLogger()
 
     päällä = False
 
@@ -245,19 +288,7 @@ def main():
             talker1.send('clean()')
             talker2.send('clean()')
 
-@app.route('/')
-def index():
-    with open('data.json', 'r') as f:
-        data = json.load(f)
-    return jsonify(data)
-
-def run_flask():
-    app.run(host='0.0.0.0', port=8000)
-
 if __name__ == '__main__':
-    
-    thread = threading.Thread(target=run_flask)
-    thread.daemon = True
-    thread.start()
-
+    t1 = threading.Thread(target=run_app, daemon=True)
+    t1.start()
     main()

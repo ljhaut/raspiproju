@@ -8,6 +8,14 @@ requests = "*"
 xmltodict = "*"
 flask = "*"
 pyserial = "*"
+psycopg2 = "*"
+flask-sqlalchemy = "*"
+bcrypt = "*"
+pyjwt = "*"
+flask-cors = "*"
+cryptography = "*"
+psycopg2-binary = "*"
+python-dotenv = "*"
 
 [dev-packages]
 
