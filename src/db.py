@@ -42,7 +42,7 @@ def register():
             username = username
         ).first()
         if existingUser:
-            return jsonify({'error': 'Username alreadu exists'}), 409
+            return jsonify({'error': 'Username already exists'}), 409
         
         hashedPassword = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
         newUser = User(username = username, password = hashedPassword, access = 'user')
