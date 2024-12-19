@@ -1,12 +1,5 @@
-# L-mminvesivaraaja
+# Electrical home systems manager
 
-Haetaan netistä sähkön SPOT-hinta seuraavalle päivälle ja sen mukaan tehdään erilaisia ratkaisuja ja toimintoja.
+This electrical home systems manager is done utilizing a raspberry pi. The software gathers information about the day-ahead prices of electricity through ENTSO-e API and looks for the cheapest hours of the day. During these hours, which typically are during night time, different electrical systems at home are turned on.
 
-Tällä hetkellä ohjelma ohjaa releitä, jotka kytketään lämminvesivaraajaan ja sitä kautta kytkee sähkövirran päälle tai pois. 
-Tulevaisuudessa toiminnallisuutta tullaan lisäämään.
-
-Ohjelman toimimiseksi täytyy suorittaa seuraava komento shellissä:
-
-sh install.sh
-
-Tämän jälkeen config.py fileen "api_key" kohtaan täytyy antaa oma Entso e api_key
+The software controls relays that are connected to the raspberry pi through raspberry pi picos. Using the picos makes the system more scalable.
